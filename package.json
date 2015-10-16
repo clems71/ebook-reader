@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "main": "main.js",
   "scripts": {
-    "package": "electron-packager ./ ebook-reader --platform=linux --arch=x64 --version=0.34.0",
+    "package": "electron-packager ./ ebook-reader --platform=linux --arch=x64 --version=0.34.0 && tar cvzf ebook-reader-linux-x64.tar.gz ebook-reader-linux-x64",
     "start": "electron main.js"
   },
   "dependencies": {
