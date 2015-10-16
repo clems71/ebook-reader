@@ -28,3 +28,5 @@ node_modules
 
 # Mac OS X garbage
 .DS_Store
+
+ebook-reader-linux-x64*
