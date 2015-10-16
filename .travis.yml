@@ -1,4 +1,11 @@
 language: node_js
 node_js:
-  - "4.1"
+- '4.1'
 script: npm run package
+deploy:
+  provider: releases
+  api_key:
+    secure: sTziYIsmxHjhJbc/bVOwxrfjINprqaPZsxRuzrsTSUk7T1VL4gnPr+09beOyGB5iSozku9acoAm40ZimrUH6sZmABuKGnNyUV+vdyoKgaCdqZxSoqwEZpcmH4GkrA83DFaSuADMzfVu8Xv0GjCJCeWhafeNWyMtcsOGfHDaFl6tHq6e0BCCNZysDajBWflJpfoppG6trbUpw44CZsbwSBMITOL3FfvLodxgZPVwDOnB0TwZqLJggGRh/XcKFCC0NxLDzla1FX8ehVZa0CypKCdY1Mte7wl0yiaaCwjpnJr19KpF5afbh4jiVeExrvX1dyLUzr/mF2ouTzXZTMo1mzU9WxxSl7JkJaKQXLDhsMR4lvgo2jgzhVSoPLabDy39/h8YrX/Wu8OGP4/DiUJ7sFqlUgZYHetNe/FgIWz9Oz7AoTu9Fy9puCpvcjgpFq0I9Fi/z1f9XuIJR5FOFOmR57nPrilHXPD1ckWixvgfLND7fs3HltoVAhDNRg1aYIZegJyPG8vCpLKwCe7UKlPF/xrjalsPHqylEA5syc0sfeHDU2JxT3PVHua392b6PC499ZNhRynDtfXEcyrGnNqgTTj9inAOYBtb3dwAEMitn174Zw6uBABjml8/MYyYrA4eWwZOyyb+lFXtLOPRPJfqwjtQTR7fqMk/+yRkPbMIMq1A=
+  file: ebook-reader-linux-x64.tar.gz
+  on:
+    repo: clems71/ebook-reader
