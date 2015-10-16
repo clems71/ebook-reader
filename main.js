@@ -25,12 +25,12 @@ app.on('ready', function () {
   mainWindow = new BrowserWindow({
     width: 1024,
     height: 600,
-    title: 'Electron eBook Reader',
+    title: 'eBook Reader',
     'auto-hide-menu-bar': true
   })
 
   // and load the index.html of the app.
-  mainWindow.loadUrl('file://' + __dirname + '/index_pdf.html')
+  mainWindow.loadUrl('file://' + __dirname + '/index.html')
 
   // Open the devtools.
   // mainWindow.openDevTools();

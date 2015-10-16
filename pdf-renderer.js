@@ -54,6 +54,10 @@ class PDFRenderer extends EventEmitter {
     this._render()
   }
 
+  destroy () {
+    this._book.destroy()
+  }
+
   _upToDate () {
     return this._lastJob.page === this._page && this._lastJob.quality === HQ_SCALE
   }

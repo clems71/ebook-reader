@@ -6,24 +6,7 @@
 
       body {
         overflow: hidden;
-				margin: 0;
-      }
-
-      #main {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-      }
-
-      #area {
-        width: 80%;
-        height: 80%;
-        margin: 5% auto;
-        max-width: 1250px;
-      }
-
-      #area iframe {
-        border: none;
+        margin: 0;
       }
 
       #prev {
@@ -32,6 +15,14 @@
 
       #next {
         right: 40px;
+      }
+
+      .fullpage {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
       }
 
       .arrow {
@@ -56,54 +47,78 @@
         color: #000;
       }
 
-			#overlay {
-				background-color: rgba(80, 137, 255, 0);
-				position: absolute;
-				top: 0;
-				left: 0;
+      #overlay {
+        background-color: rgba(80, 137, 255, 0);
+      }
+
+      #overlay.over {
+        background-color: rgba(80, 137, 255, 0.2);
+      }
+
+      #hint {
+        font-family: 'Indie Flower', cursive;
+        font-size: 1.8em;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         width: 100%;
         height: 100%;
-			}
+      }
 
-			#overlay.over {
-				background-color: rgba(80, 137, 255, 0.2);
-			}
+      #pageim {
+        height: 100%;
+        display: block;
+        margin: auto;
+        border: 1px solid #DDD;
+      }
 
-			#hint {
-				font-family: 'Indie Flower', cursive;
-				font-size: 1.8em;
-				display: flex;
-		    justify-content: center;
-		    align-items: center;
-				width: 100%;
-				height: 100%;
-			}
+      #pageim.hidden, #epubarea.hidden {
+        display: none;
+      }
+
+      #epubarea {
+        width: 80%;
+        height: 80%;
+        margin: 5% auto;
+        max-width: 1250px;
+      }
+
+      #epubarea iframe {
+        border: none;
+      }
 
     </style>
-		<link href='https://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Indie+Flower' rel='stylesheet' type='text/css'>
+    <!-- PDFJS Library -->
+    <script src="js/pdf.js"></script>
     <!-- ZIP Library -->
     <script src="js/zip.min.js"></script>
     <!-- EPUBJS Renderer -->
     <script src="js/epub.js"></script>
   </head>
-  <body>
-    <div id="main">
-      <div id="area"></div>
+  <body onkeydown="keyEvent(event)">
+    <div class="fullpage">
+      <img src="" alt="" id="pageim" />
+      <div id="epubarea"></div>
     </div>
-		<div id="hint">Drop an ePub file here...</div>
-		<div id="overlay"></div>
-		<div id="prev" onclick="book.prevPage();" class="arrow">‹</div>
-		<div id="next" onclick="book.nextPage();"class="arrow">›</div>
+    <div id="hint" class="fullpage">Drop an ebook here...</div>
+    <div id="overlay" class="fullpage"></div>
+    <div id="prev" onclick="loadPrevPage();" class="arrow">‹</div>
+    <div id="next" onclick="loadNextPage();"class="arrow">›</div>
     <script>
       'use strict'
 
-      let co = require('co')
+      let PDFRenderer = require('./pdf-renderer')
+      let EPUBRenderer = require('./epub-renderer')
 
-			let book = null
-			let overlayElmt = document.getElementById('overlay')
-			let hintElmt = document.getElementById('hint')
+      let overlayElmt = document.getElementById('overlay')
+      let hintElmt = document.getElementById('hint')
 
-			function handleDragOver (e) {
+      // Viewport related
+      let pageim = document.getElementById('pageim')
+      let epubarea = document.getElementById('epubarea')
+
+      function handleDragOver (e) {
         e.stopPropagation()
         e.preventDefault()
         e.dataTransfer.dropEffect = 'copy'
@@ -114,27 +129,49 @@
         overlayElmt.classList.remove('over')
       }
 
-      function handleDrop (e) {
-        e.stopPropagation()
-				e.preventDefault()
-				overlayElmt.classList.remove('over')
+      let renderer = null
 
-				if (book) book.destroy()
-
-				book = ePub(e.dataTransfer.files[0].path)
-	      book.renderTo("area")
-
-				// Remove hint
-				hintElmt.parentNode.removeChild(hintElmt)
-
-				co(function * () {
-	        let toc = yield book.getToc()
-	        console.log(toc)
-	      })
+      function keyEvent (event) {
+        var key = event.keyCode
+        if (key == 37) { // Left
+          renderer.prevPage()
+        } else if (key == 39) { // Right
+          renderer.nextPage()
+        }
       }
 
-			overlayElmt.addEventListener('dragover', handleDragOver, false)
-			overlayElmt.addEventListener('dragleave', handleDragLeave, false)
+      function loadBook (path) {
+        if (hintElmt) {
+          hintElmt.parentNode.removeChild(hintElmt)
+          hintElmt = null
+        }
+
+        pageim.classList.add('hidden')
+        epubarea.classList.add('hidden')
+
+        if (renderer) renderer.destroy()
+
+        if (path.endsWith('.epub')) {
+          epubarea.classList.remove('hidden')
+          renderer = new EPUBRenderer(path, 'epubarea')
+        } else if (path.endsWith('.pdf')) {
+          renderer = new PDFRenderer(path)
+          renderer.on('data', function (data) {
+            pageim.classList.remove('hidden')
+            pageim.src = data
+          })
+        }
+      }
+
+      function handleDrop (e) {
+        e.stopPropagation()
+        e.preventDefault()
+        overlayElmt.classList.remove('over')
+        loadBook(e.dataTransfer.files[0].path)
+      }
+
+      overlayElmt.addEventListener('dragover', handleDragOver, false)
+      overlayElmt.addEventListener('dragleave', handleDragLeave, false)
       overlayElmt.addEventListener('drop', handleDrop, false)
     </script>
   </body>
