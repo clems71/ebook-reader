@@ -1,0 +1,14 @@
+{
+  "name": "ebook-reader",
+  "version": "0.0.1",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron main.js"
+  },
+  "dependencies": {
+    "co": "^4.6.0",
+    "co-wait": "0.0.0",
+    "electron-prebuilt": "^0.34.0",
+    "ya-watchdog": "0.0.1"
+  }
+}
