@@ -30,3 +30,4 @@ node_modules
 .DS_Store
 
 ebook-reader-linux-x64*
+ebook-reader-win32-x64*
